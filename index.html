@@ -86,12 +86,29 @@
             font-weight: bold;
             margin-top: 5px;
         }
+        .flashing-text {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: red;
+            font-size: 24px;
+            font-weight: bold;
+            opacity: 0;
+            animation: flash 30s infinite;
+        }
+        @keyframes flash {
+            0% { opacity: 0; }
+            5% { opacity: 1; }
+            10% { opacity: 0; }
+            100% { opacity: 0; }
+        }
     </style>
 </head>
 <body>
     <div class="bouncing-line">MrLinux Is Watching You...</div>
+    <div class="flashing-text">I know where you live...</div>
     <div class="container">
-        <h1>Submit Your Anonymous Message</h1>
+        <h1>Submit Your Anonymous Message And The Staff Will Read It!</h1>
         <form id="messageForm" action="https://formspree.io/f/mwplbrkq" method="POST">
             <input type="hidden" name="_next" value="https://mrlinuxhype.github.io/anonymous-message-site./" />
             <input type="hidden" name="_subject" value="New Anonymous Message!" />
@@ -103,6 +120,7 @@
         </form>
     </div>
     <div class="ip-display" id="ipDisplay"></div>
+    <div class="latest-ip" id="latestIpDisplay"></div>
     <footer>Made by mrlinux, oh ur ip is safe trust me bro fr fr</footer>
     <script>
         const line = document.querySelector('.bouncing-line');
