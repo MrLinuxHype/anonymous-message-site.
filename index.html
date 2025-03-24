@@ -3,27 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <title>Anonymous Message</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 90%;
+            margin: 20px auto;
+            position: relative;
+        }
+        h1 {
+            text-align: center;
+            color: #ffcc00;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        label {
+            color: #ffcc00;
+        }
+        textarea {
+            background-color: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            resize: none;
+            font-size: 1rem;
+        }
+        input[type="submit"] {
+            background-color: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        input[type="submit"]:hover {
+            background-color: #ffc107;
+        }
+        .bouncing-line {
+            position: absolute;
+            white-space: nowrap;
+            font-size: 20px;
+            color: #ffcc00;
+            font-weight: bold;
+        }
+        .ip-display {
+            text-align: center;
+            color: #ffcc00;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        footer {
+            text-align: center;
+            color: #ffcc00;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: auto;
+        }
+        .warning-line {
+            text-align: center;
+            color: red;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
-   <h1>Submit Your Anonymous Message</h1>
-    <form action="https://formspree.io/f/mwplbrkq" method="POST">
-        <!-- Replace 'your_formspree_id' with the ID provided by Formspree -->
-        <input type="hidden" name="_next" value="https://mrlinuxhype.github.io/anonymous-message-site./" />
-        <input type="hidden" name="_subject" value="New Anonymous Message!" />
-        <input type="hidden" name="_hmac" value="true" />
-        <label for="message">Message:</label><br>
-        <textarea id="message" name="message" rows="4" cols="50"></textarea><br><br>
-        <input type="submit" value="Submit">
-    </form>
-
+    <div class="bouncing-line">MrLinux Is Watching You...</div>
+    <div class="container">
+        <h1>Submit Your Anonymous Message</h1>
+        <form id="messageForm" action="https://formspree.io/f/mwplbrkq" method="POST">
+            <input type="hidden" name="_next" value="https://mrlinuxhype.github.io/anonymous-message-site./" />
+            <input type="hidden" name="_subject" value="New Anonymous Message!" />
+            <input type="hidden" name="_hmac" value="true" />
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="4" cols="50"></textarea>
+            <div id="typing-warning" class="warning-line"></div>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <div class="ip-display" id="ipDisplay"></div>
+    <footer>Made by mrlinux, oh ur ip is safe trust me bro fr fr</footer>
     <script>
+        const line = document.querySelector('.bouncing-line');
+        let x = 0;
+        let y = 0;
+        let dx = 2;
+        let dy = 2;
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        function moveLine() {
+            x += dx;
+            y += dy;
+            if (x + line.offsetWidth >= width || x <= 0) {
+                dx = -dx;
+            }
+            if (y + line.offsetHeight >= height || y <= 0) {
+                dy = -dy;
+            }
+            line.style.left = `${x}px`;
+            line.style.top = `${y}px`;
+            requestAnimationFrame(moveLine);
+        }
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
-                console.log(`IP Address: ${data.ip}`);
-                // You can send this IP address to your server if needed
+                document.getElementById('ipDisplay').textContent = `Dunno ur ip address? Here it is! ${data.ip}`;
             })
-            .catch(error => console.error('Error fetching IP:', error));
+            .catch(error => {
+                document.getElementById('ipDisplay').textContent = 'Error fetching IP';
+            });
+        document.getElementById("messageForm").addEventListener("submit", function(event) {
+            const message = document.getElementById("message").value.trim();
+            if (message === "") {
+                event.preventDefault();
+                document.getElementById("typing-warning").textContent = "Mf type something or get linuxed.";
+                return false;
+            }
+            document.getElementById("typing-warning").textContent = "";
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`IP Address: ${data.ip}`);
+                })
+                .catch(error => console.error('Error fetching IP:', error));
+        });
+        let typingTimer;
+        const typingInterval = 20 * 1000;
+        document.getElementById("message").addEventListener("input", function() {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => {
+                document.getElementById("typing-warning").textContent = "BRO WHAT ARE YOU TYPING A LOVE LETTER?";
+            }, typingInterval);
+        });
+        moveLine();
     </script>
 </body>
 </html>
